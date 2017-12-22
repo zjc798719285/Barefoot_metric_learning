@@ -49,7 +49,9 @@ class Datagenerator_txt:
         for index_person, person_list in enumerate(file_path):
             for index, path in enumerate(person_list):
                img = cv2.imread(path)
-               batch_x[index_k] = img
+               thres = np.random.randint(low=8, high=50, size=1)
+               b_img, thresh1 = cv2.threshold(img, thres, 255, cv2.THRESH_BINARY)
+               batch_x[index_k] = b_img
                label[index_k] = self.label_erxtract(path)
                index_k = index_k+1
         return batch_x, label
@@ -60,3 +62,5 @@ def list_shuffle(lists):
            lists[value] = lists[rad[0]]
            lists[rad[0]] = t
        return lists
+def random_threshold():
+    return 1
