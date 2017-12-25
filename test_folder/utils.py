@@ -15,6 +15,7 @@ def getfilelist(input_dir, file_path, output_dir, output_path):
             file_path.append(filename)
             output_path.append(outfile)
     return
+
 def mkdir(path, output):
     for sub_path in os.listdir(path):
         filepath = os.path.join(path, sub_path)
@@ -24,7 +25,11 @@ def mkdir(path, output):
                 os.mkdir(outpath)
             mkdir(filepath, outpath)
 
-def img2vec(filelist, output_list):
+def img2vec(input_dir, output_dir):
+   file_list = []
+   output_list = []
+   getfilelist(input_dir, file_list, output_dir, output_list)
+   mkdir(input_dir, output_dir)
    x = tf.placeholder(tf.float32, [1, FLAGS.height, FLAGS.width, FLAGS.channel])
    model = my_alex(x, 1, 1000)  #下一版本要改进，用参数搜集
    output, output2 = model.predict()
@@ -32,20 +37,29 @@ def img2vec(filelist, output_list):
    with tf.Session() as sess:
        sess.run(tf.global_variables_initializer())
        saver.restore(sess, FLAGS.checkpoint)
-       for index in range(len(filelist)):
+       for index in range(len(file_list)):
           img = np.ndarray([1, FLAGS.height, FLAGS.width, FLAGS.channel])
-          img[0, :, :, :] = cv2.imread(filelist[index])
+          img[0, :, :, :] = cv2.imread(file_list[index])
           out = sess.run(output, feed_dict={x: img})
           feature = {'features': out}
           sio.savemat(output_list[index], feature)
+          print('img2vec completion rate=', index/len(file_list))
 
-
-
-
-
-
-
-
-
+# def img2vec2(model, input_dir, output_dir):
+#     file_list = []
+#     output_list = []
+#     getfilelist(input_dir, file_list, output_dir, output_list)
+#     mkdir(input_dir, output_dir)
+#     output = model.predict()
+#     saver = tf.train.Saver()
+#     with tf.Session() as sess:
+#         sess.run(tf.global_variables_initializer())
+#         saver.restore(sess, FLAGS.checkpoint)
+#         for index in range(len(file_list)):
+#             img = np.ndarray([1, FLAGS.height, FLAGS.width, FLAGS.channel])
+#             img[0, :, :, :] = cv2.imread(file_list[index])
+#             out = sess.run(output, feed_dict={x: img})
+#             feature = {'features': out}
+#             sio.tf.placeholder(tf.float32, [1, FLAGS.height, FLAGS.width, FLAGS.channel])(output_list[index], feature)
 
 
