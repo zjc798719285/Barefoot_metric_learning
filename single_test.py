@@ -4,9 +4,9 @@ from footnet_v9 import my_alex
 import scipy.io as sio
 import numpy as np
 import os
-checkpoint = 'E:\PROJECT\Fisher_loss\\feature\V1.4.0.2_footnet_v9_metric_v5\model\\fisher_loss2378.ckpt'
-file_path = 'E:\PROJECT\Barefoot_Recognition\standard_data_txt\\V1.4.0.2.txt'
-output_folder = 'E:\PROJECT\Fisher_loss\\feature\V1.4.0.2_footnet_v9_metric_v5\\feature2\\'
+checkpoint = 'F:\zjc\Barefoot_metric_learning\checkpoints\\fisher_loss46.ckpt'
+file_path = 'F:\zjc\Barefoot_metric_learning\data_txt\\V1.4.0.7_test.txt'
+output_folder = 'F:\zjc\Barefoot_metric_learning\checkpoints\\feature\\'
 def person_folder_read(file_path_test):
    f = open(file_path_test, "r")
    folder_name = f.readlines()
@@ -16,6 +16,9 @@ def person_file_read(folder_name, index,output_folder):
    person_folder = person_folder[0:len(person_folder)-1]
    person_id = person_folder.split('\\', 8)[-1]
    person_file_name = os.listdir(person_folder)
+   for file_name_i in person_file_name:
+       if file_name_i[-1] == 't':
+           person_file_name.remove(file_name_i)
    person_file_path = []
    person_save_folder = []
    person_save_path = []
@@ -26,7 +29,7 @@ def person_file_read(folder_name, index,output_folder):
       person_save_path.append(os.path.join(output_folder, person_id, file_id))
    return person_file_path, person_save_folder, person_save_path
 x = tf.placeholder(tf.float32, [1, 128, 59, 3])
-y = tf.placeholder(tf.float32, [1, 4096])
+y = tf.placeholder(tf.float32, [1, 128])
 keep_prob = tf.placeholder(tf.float32, shape=None)
 model = my_alex(x, keep_prob, num_class=1000)
 output, output2 = model.predict()

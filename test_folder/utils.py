@@ -65,16 +65,16 @@ def get_center(input_dir, length):
 def search(source, target):
     label_list = []
     i = 0
-    for tar in target:
+    for target_i in target:
         print('search', i/len(target))
         i += 1
         min_dis = 1e6; min_label = -1
-        for sou in source:
-            dis = np.sqrt(np.sum(np.square((tar[0:-1] - sou[0:-1]))))
+        for source_i in source:
+            dis = np.sqrt(np.sum(np.square((target_i[0:-1] - source_i[0:-1]))))
             if dis < min_dis:
-                min_label = sou[-1]
+                min_label = source_i[-1]
                 min_dis = dis
-        label_list.append([tar[-1], min_label])
+        label_list.append([target_i[-1], min_label])
     return label_list
 
 def save_data(data, name, save_dir):

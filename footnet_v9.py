@@ -33,7 +33,7 @@ class my_alex(object):
         net4 = block(x=net4, f=256, init=self.init, trainable=self.trainable2)
         net5 = tf.reshape(net4, [-1, 7*2*256])
         net_m = Dense(4096, activation='tanh', trainable=self.trainable2)(net5)
-        net_s = Dense(256, trainable=self.trainable2)(net_m)
+        net_s = Dense(128, trainable=self.trainable2)(net_m)
         return net_s, net_m
 def block(x, f, init,trainable):
     b1 = SeparableConv2D(filters=f, kernel_size=(3, 3), padding='same', depth_multiplier=1)(x)

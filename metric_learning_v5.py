@@ -6,7 +6,8 @@ def fisher_loss(fc, batch_person, person_file_num):
     cross_loss = 0
     for i in range(batch_person):
       index = np.linspace(i*person_file_num,
-                          i*person_file_num+person_file_num-1, person_file_num).astype(np.int32)
+                          i*person_file_num+person_file_num-1,
+                          person_file_num).astype(np.int32)
       person_fc = tf.gather(fc, index)
       person_center = tf.reduce_mean(person_fc, axis=0)
       centerloss = centerloss + center_loss(person_fc, person_center, person_file_num)
@@ -14,7 +15,8 @@ def fisher_loss(fc, batch_person, person_file_num):
     center = tf.get_collection('center')
     for j in range(batch_person):
         cross_loss = cross_loss + nearst_search(index_p=j, center=center, fc=fc,
-                                  batch_person=batch_person, person_file_num=person_file_num)
+                                                batch_person=batch_person,
+                                                person_file_num=person_file_num)
     return centerloss/batch_person, cross_loss/batch_person
 def center_loss(person_fc, person_center, person_file_num):
     sum_centerdis = 0

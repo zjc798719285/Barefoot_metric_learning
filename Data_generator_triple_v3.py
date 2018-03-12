@@ -32,6 +32,9 @@ class Datagenerator_txt:
         person = []
         folder_path = folder_path[0:len(folder_path)-1]
         file_name = os.listdir(folder_path)
+        for file_name_i in file_name:
+            if file_name_i[-1] == 't':
+                file_name.remove(file_name_i)
         for i in range(self.person_file_num):
             file_name = list_shuffle(file_name)
             file_path = os.path.join(folder_path, file_name[1])
@@ -49,6 +52,7 @@ class Datagenerator_txt:
         for index_person, person_list in enumerate(file_path):
             for index, path in enumerate(person_list):
                img = cv2.imread(path)
+               img = cv2.resize(img, (59, 128))
                batch_x[index_k] = img
                label[index_k] = self.label_erxtract(path)
                index_k = index_k+1

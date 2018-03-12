@@ -1,19 +1,19 @@
 from Data_generator_triple_v3 import Datagenerator_txt
 from footnet_v9 import my_alex
 import tensorflow as tf
-from metric_learning_v5 import fisher_loss
+from metric_learning_v6 import fisher_loss
 import os
 import time
 import numpy as np
 #from triple_loss_v2 import triplet_loss
-filepath_train = 'E:\PROJECT\Barefoot_Recognition\standard_data_txt\\V1.2.0.1_train_triple.txt'
-filepath_test = 'E:\PROJECT\Barefoot_Recognition\standard_data_txt\\V1.2.0.1_test_triple.txt'
-checkpoint_path = 'E:\PROJECT\Fisher_loss\checkpoint\\'
-checkpoint = 'E:\PROJECT\Barefoot_Recognition\checkpoint\\best_checkpoint\my_net_inception_epoch759.ckpt'
+filepath_train = 'F:\zjc\Barefoot_metric_learning\data_txt\\V1.4.0.7_train.txt'
+filepath_test = 'F:\zjc\Barefoot_metric_learning\data_txt\\V1.4.0.7_test.txt'
+checkpoint_path = 'F:\zjc\Barefoot_metric_learning\checkpoints\\'
+checkpoint = 'F:\zjc\Barefoot_metric_learning\checkpoints\\fisher_loss46.ckpt'
 filewriter_path = os.path.join(checkpoint_path, 'writer')
-batch_person = 20
+batch_person = 30
 learning_rate = 0.01
-person_file_num = 5
+person_file_num = 10
 num_class = 1000
 keep_prob1 = 0.7
 epoch = 5000
@@ -27,7 +27,7 @@ centerloss, crossloss = fisher_loss(output, batch_person, person_file_num)
 with tf.name_scope('loss'):
   loss = centerloss/crossloss
 tf.summary.scalar('loss', loss)
-opt1 = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-08)
+opt1 = tf.train.AdadeltaOptimizer(learning_rate=learning_rate, rho=0.9)
 opt = opt1.minimize(loss)
 train_generator = Datagenerator_txt(file_path_train=filepath_train,
                             batch_person=batch_person, person_file_num=person_file_num, num_class=num_class)
@@ -45,7 +45,7 @@ merged_summary = tf.summary.merge_all()
 writer = tf.summary.FileWriter(filewriter_path)
 with tf.Session() as sess:
    sess.run(tf.global_variables_initializer())
-  # saver.restore(sess, checkpoint_path)
+   saver.restore(sess, checkpoint)
    train_step = train_generator.num_step()
    test_step = test_generator.num_step()
    for i in range(epoch):
