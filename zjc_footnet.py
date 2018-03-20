@@ -5,10 +5,8 @@ import keras as k
 import tensorflow as tf
 #一个666的模型
 class my_alex(object):
-    def __init__(self, x, keep_prob, num_class):
+    def __init__(self, x):
         self.x = x
-        self.keep_prob = keep_prob
-        self.num_class = num_class
         self.init = k.initializers.glorot_normal()
         self.regular = regularizers.l1_l2(l1=0.1, l2=0.5)
         self.trainable1 = True
@@ -33,7 +31,7 @@ class my_alex(object):
         net4 = block(x=net4, f=256, init=self.init, trainable=self.trainable2)
         net5 = tf.reshape(net4, [-1, 7*2*256])
         net_m = Dense(4096, activation='tanh', trainable=self.trainable2)(net5)
-        net_s = Dense(256, trainable=self.trainable2)(net_m)
+        net_s = Dense(128, trainable=self.trainable2)(net_m)
         return net_s, net_m
 def block(x, f, init,trainable):
     b1 = SeparableConv2D(filters=f, kernel_size=(3, 3), padding='same', depth_multiplier=1)(x)

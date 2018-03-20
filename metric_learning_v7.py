@@ -1,41 +1,23 @@
 import numpy as np
 import tensorflow as tf
 #类间算最小距离，类内计算平均中心距和最大中心距
-def fisher_loss(tensor, batch_person, person_file_num,center_top_n=1,cross_top_n=1):
-    crossloss = 0
-    tensor = tf.reshape(tensor=tensor, shape=(batch_person, person_file_num, -1))
-    center = tf.reduce_mean(input_tensor=tensor, axis=1, keep_dims=True)
-    center_dis = 0.5*(tensor - center)**2
-    avg_center_loss = tf.reduce_mean(tf.reduce_sum(center_dis, 2))
-    center_dis = tf.reduce_sum(center_dis, 2, True)
-    center_dis = tf.reshape(center_dis, (batch_person, person_file_num))
-    top_k, index = tf.nn.top_k(input=center_dis, k=center_top_n)
-    center_top_k = tf.reduce_mean(top_k)
-    centerloss = 0.5 * (center_top_k + avg_center_loss)
+def fisher_loss(fc, batch_person, person_file_num):
+    centerloss = 0
+    cross_loss = 0
     for i in range(batch_person):
-        center_i = tf.gather(center, i)
-        cross_dis = -tf.reduce_sum(0.5*(tensor - center_i)**2, 2)
-        cross_dis_1D = tf.reshape(cross_dis, (-1, batch_person * person_file_num))
-        value, index = tf.nn.top_k(cross_dis_1D, cross_top_n)
-        cross_loss_i = -tf.reduce_mean(value)
-        crossloss += cross_loss_i
-    return centerloss, crossloss/batch_person
-    # centerloss = 0
-    # cross_loss = 0
-    # for i in range(batch_person):
-    #   index = np.linspace(i*person_file_num,
-    #                       i*person_file_num+person_file_num-1,
-    #                       person_file_num).astype(np.int32)
-    #   person_fc = tf.gather(tensor, index)
-    #   person_center = tf.reduce_mean(person_fc, axis=0)
-    #   centerloss = centerloss + center_loss(person_fc, person_center, person_file_num)
-    #   tf.add_to_collection('center', person_center)
-    # center = tf.get_collection('center')
-    # for j in range(batch_person):
-    #     cross_loss = cross_loss + nearst_search(index_p=j, center=center, fc=tensor,
-    #                                             batch_person=batch_person,
-    #                                             person_file_num=person_file_num)
-    # return centerloss/batch_person, cross_loss/batch_person
+      index = np.linspace(i*person_file_num,
+                          i*person_file_num+person_file_num-1,
+                          person_file_num).astype(np.int32)
+      person_fc = tf.gather(fc, index)
+      person_center = tf.reduce_mean(person_fc, axis=0)
+      centerloss = centerloss + center_loss(person_fc, person_center, person_file_num)
+      tf.add_to_collection('center', person_center)
+    center = tf.get_collection('center')
+    for j in range(batch_person):
+        cross_loss = cross_loss + nearst_search(index_p=j, center=center, fc=fc,
+                                                batch_person=batch_person,
+                                                person_file_num=person_file_num)
+    return centerloss/batch_person, cross_loss/batch_person
 def center_loss(person_fc, person_center, person_file_num):
     sum_centerdis = 0
     for i in range(person_file_num):

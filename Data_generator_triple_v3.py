@@ -53,6 +53,7 @@ class Datagenerator_txt:
             for index, path in enumerate(person_list):
                img = cv2.imread(path)
                img = cv2.resize(img, (59, 128))
+               img = img_augment(img)
                batch_x[index_k] = img
                label[index_k] = self.label_erxtract(path)
                index_k = index_k+1
@@ -64,3 +65,12 @@ def list_shuffle(lists):
            lists[value] = lists[rad[0]]
            lists[rad[0]] = t
        return lists
+def img_augment(img):
+    aug_lr = np.random.rand()
+    if aug_lr >= 0.5:
+        img = np.fliplr(img)
+    return img
+
+if __name__ == '__main__':
+    aug_rand = np.random.rand()
+    print(aug_rand)

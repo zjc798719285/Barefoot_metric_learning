@@ -4,9 +4,9 @@ from footnet_v9 import my_alex
 import scipy.io as sio
 import numpy as np
 import os
-checkpoint = 'F:\zjc\Barefoot_metric_learning\checkpoints\\fisher_loss46.ckpt'
+checkpoint = 'F:\zjc\Barefoot_metric_learning\checkpoints\\fisher_loss7.ckpt'
 file_path = 'F:\zjc\Barefoot_metric_learning\data_txt\\V1.4.0.7_test.txt'
-output_folder = 'F:\zjc\Barefoot_metric_learning\checkpoints\\feature\\'
+output_folder = 'F:\zjc\Barefoot_metric_learning\checkpoints\\features\\'
 def person_folder_read(file_path_test):
    f = open(file_path_test, "r")
    folder_name = f.readlines()
