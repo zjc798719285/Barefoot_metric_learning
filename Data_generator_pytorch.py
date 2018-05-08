@@ -43,7 +43,7 @@ class Datagenerator_txt:
             person.append(file_path)
         return person
     def next_batch(self, step):
-        batch_x = np.ndarray([self.batch_size, 128, 59, 3])
+        batch_x = np.ndarray([self.batch_size, 3, 128, 59])
         label = np.zeros([self.batch_size, self.num_class])
         file_path = []
         index_k = 0
@@ -53,17 +53,14 @@ class Datagenerator_txt:
            file_path.append(person)
         for index_person, person_list in enumerate(file_path):
             for index, path in enumerate(person_list):
-               t1 = time.time()
                img = cv2.imread(path)
-               t2 = time.time()
                img = cv2.resize(img, (59, 128))
                img = img_augment(img)
-               t3 = time.time()
+               img = img.reshape(3, 128, 59)
                batch_x[index_k] = img
                label[index_k] = self.label_erxtract(path)
                index_k = index_k+1
-        batch_reshape = np.reshape(batch_x, [self.batch_person*self.person_file_num, 3, 128, 59])
-        return batch_reshape, label
+        return batch_x, label
 def list_shuffle(lists):
        for value, list in enumerate(lists):
            rad = np.random.randint(low=0, high=len(lists), size=[1], dtype=np.int16)
