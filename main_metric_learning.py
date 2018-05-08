@@ -6,10 +6,11 @@ import os
 import time
 import numpy as np
 #from triple_loss_v2 import triplet_loss
-filepath_train = 'F:\zjc\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_train.txt'
-filepath_test = 'F:\zjc\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_test.txt'
+filepath_train = 'E:\PROJECT\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_train.txt'
+filepath_test = 'E:\PROJECT\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_test.txt'
 checkpoint_path = 'F:\zjc\Barefoot_metric_learning\checkpoints_700\\'
-checkpoint = 'F:\zjc\Barefoot_metric_learning\checkpoints\\fisher_loss7.ckpt'
+checkpoint = 'E:\PROJECT\Barefoot_metric_learning\checkpoints\checkpoints\checkpoints_700_people' \
+             '\\fisher_loss575.ckpt'
 filewriter_path = os.path.join(checkpoint_path, 'writer')
 batch_person = 25
 learning_rate = 0.01

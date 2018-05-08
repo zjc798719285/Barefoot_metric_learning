@@ -1,10 +1,6 @@
 import numpy as np
 import scipy.io as sio
 import os, operator, cv2
-import tensorflow as tf
-from zjc_footnet import my_alex
-import matplotlib.pyplot as plt
-
 
 def load_database(feature_dir):
     #用于载入数据库中所有特征
@@ -53,11 +49,6 @@ def split_database(database):
 
 
 
-
-
-
-
-
 def foot_search(center, person):
     #该函数用于检索
     # 参数:
@@ -74,8 +65,9 @@ def foot_search(center, person):
         metric_list = []
         for feature_i in feature_list:
             diff = feature_i - fc
-            metric = np.dot(diff, np.transpose(diff))    #欧氏距离
-            metric_list.append(metric)
+            metric = np.dot(diff, np.transpose(diff))  #欧氏距离矩阵
+            metric_reshape = np.reshape(metric, newshape=4)
+            metric_list.append(min(metric_reshape))
         metric_list.sort()
         result_list.append([metric_list[0], person_id])
     result_list.sort(key=operator.itemgetter(0))
@@ -87,7 +79,7 @@ def foot_search(center, person):
 
 
 if __name__ == '__main__':
-    feature_dir = 'F:\zjc\Barefoot_metric_learning\checkpoints\\features'
+    feature_dir = 'E:\PROJECT\Barefoot_metric_learning\checkpoints\checkpoints\\features'
     # persons, center = load_database(feature_dir=feature_dir)
     database = load_database2(feature_dir=feature_dir)
     center, persons = split_database(database)
