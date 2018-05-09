@@ -34,8 +34,10 @@ class Datagenerator:
 
     def next_batch(self):
         batch_x = []
+        is_next_epoch = False
         if self.step > int(math.floor(len(self.imgList)/self.batch_person)):
             self.shuffle()
+            is_next_epoch = True
         start = (self.step - 1)*self.batch_person
         stop = self.step * self.batch_person
         batch_person = self.imgList[start:stop]
@@ -46,7 +48,7 @@ class Datagenerator:
         batch_x = np.array(batch_x)
         batch_x = batch_x.reshape(-1, 3, 128, 59)
         self.step += 1
-        return batch_x
+        return batch_x, is_next_epoch
 
 
 

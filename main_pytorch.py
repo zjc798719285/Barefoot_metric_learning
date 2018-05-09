@@ -2,43 +2,48 @@ import torch
 import time
 import resnet_pytorch
 from footnet_pytorch import FootNet
-from DataGenerator import  Datagenerator
+from DataGenerator import Datagenerator
 import torch.optim as optim
-from metric_learning_pytorch import metric_loss
+from metric_learning_pytorch import metric_loss3
 import numpy as np
-batch_person = 15
+batch_person = 10
 learning_rate = 0.01
 person_file_num = 10
-num_class = 1000
 filepath_train = 'E:\PROJECT\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_train.txt'
 filepath_test = 'E:\PROJECT\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_test.txt'
 
-# train_generator = Datagenerator_txt(file_path_train=filepath_train,
-#                                     batch_person=batch_person,
-#                                     person_file_num=person_file_num,
-#                                     num_class=num_class)
-# test_generator = Datagenerator_txt(file_path_train=filepath_test,
-#                                    batch_person=batch_person,
-#                                    person_file_num=person_file_num,
-#                                    num_class=num_class)
-train_generator = Datagenerator(file_path=filepath_train, batch_person=batch_person, person_file_num=person_file_num)
 
-# model = FootNet(batch_person, person_file_num).to('cuda')
-model2 = resnet_pytorch.resnet18(pretrained=False, num_person=batch_person,num_file=person_file_num).to('cuda')
-optimizer = optim.Adadelta(model2.parameters(), lr=0.001, rho=0.7)
+train_generator = Datagenerator(file_path=filepath_train, batch_person=batch_person, person_file_num=person_file_num)
+test_generator = Datagenerator(file_path=filepath_test, batch_person=batch_person, person_file_num=person_file_num)
+model = resnet_pytorch.resnet18(pretrained=False, num_person=batch_person, num_file=person_file_num).to('cuda')
+optimizer = optim.Adadelta(model.parameters(), lr=0.001, rho=0.7)
 
 for _ in range(10000):
-   for step in range(20):
-      t1 = time.time()
-      batch_x = train_generator.next_batch()
-      t2 = time.time()
-      fc = model2.forward(torch.cuda.FloatTensor(batch_x))
-      center, cross, loss = metric_loss(fc, batch_person, 128)
-      loss.backward()
-      optimizer.step()
-      t3 = time.time()
-      print(t2-t1, t3-t2, t3-t1)
-      print('loss=', loss, 'center', center, 'cross', cross)
+   t1 = time.time()
+   batch_x, is_next_epoch = train_generator.next_batch()
+   fc = model.forward(torch.cuda.FloatTensor(batch_x))
+   center, cross, loss = metric_loss3(fc, batch_person=batch_person, num_file=person_file_num, fcs=128)
+   loss.backward()
+   optimizer.step()
+   t2 = time.time()
+   print('Training:center_loss=', center, 'cross_loss=', cross, 'loss=', loss, 'times=', t2 - t1)
+   if is_next_epoch:
+       print('******************begin testing***********************')
+       for _ in range(100000):
+           t3 = time.time()
+           batch_, is_next_epoch = test_generator.next_batch()
+           fc = model.forward(torch.cuda.FloatTensor(batch_))
+           center, cross, loss = metric_loss3(fc, batch_person=batch_person, num_file=person_file_num, fcs=128)
+           t4 = time.time()
+           print('Testing:center_loss=', center, 'cross_loss=', cross, 'loss=', loss, 'times=', t4 - t3)
+           if is_next_epoch:
+               print('***************stop testing********************')
+               break
+
+
+
+
+
 
 
 
