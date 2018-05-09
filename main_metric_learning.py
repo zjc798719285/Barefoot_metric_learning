@@ -5,14 +5,13 @@ from metric_learning_v5 import fisher_loss
 import os
 import time
 import numpy as np
-#from triple_loss_v2 import triplet_loss
 filepath_train = 'E:\PROJECT\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_train.txt'
 filepath_test = 'E:\PROJECT\Barefoot_metric_learning\data_txt\\V1.4.0.7_700_test.txt'
 checkpoint_path = 'F:\zjc\Barefoot_metric_learning\checkpoints_700\\'
 checkpoint = 'E:\PROJECT\Barefoot_metric_learning\checkpoints\checkpoints\checkpoints_700_people' \
              '\\fisher_loss575.ckpt'
 filewriter_path = os.path.join(checkpoint_path, 'writer')
-batch_person = 25
+batch_person = 15
 learning_rate = 0.01
 person_file_num = 10
 num_class = 1000
@@ -59,8 +58,12 @@ with tf.Session() as sess:
        train_generator.shuffle_folder()
        test_generator.shuffle_folder()
        for step_train in range(train_step):
+         t1 = time.time()
          batch_x, label_train = train_generator.next_batch(step_train)
+         t2 = time.time()
          optt, train_loss, cl, cr = sess.run([opt, loss, centerloss, crossloss], feed_dict={x: batch_x, y: label_train, keep_prob: keep_prob1})
+         t3 = time.time()
+         print('s1', t2-t1, 's2', t3-t2)
          print('training', step_train, 'step', 'train_loss=', train_loss,
                 'center_loss=', cl, 'cross_loss=', cr)
        for step_test in range(test_step):
