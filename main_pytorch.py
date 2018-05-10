@@ -35,7 +35,7 @@ for _ in range(10000):
            fc = model.forward(torch.cuda.FloatTensor(batch_))
            center, cross, loss = metric_loss3(fc, batch_person=batch_person, num_file=person_file_num, fcs=128)
            t4 = time.time()
-           print('Testing:center_loss=', center, 'cross_loss=', cross, 'loss=', loss, 'times=', t4 - t3)
+           print('Testing:center_loss=', center,  'cross_loss=', cross, 'loss=', loss, 'times=', t4 - t3)
            if is_next_epoch:
                print('***************stop testing********************')
                break
